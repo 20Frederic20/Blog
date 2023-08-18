@@ -1,6 +1,8 @@
-/.vscode
-/20180905_GestionBulletinsScolaires (1).pdf
-/[MLD] Gestion du lycée (MLD et MCD à corriger) - Schéma.pdf
-/blogRestApi
-/input.sql
-/out.sql
+venv
+__pycache__
+migrations
+.vscode
+input.sql
+out.sql
+20180905_GestionBulletinsScolaires (1).pdf
+[MLD] Gestion du lycée (MLD et MCD à corriger) - Schéma.pdf
