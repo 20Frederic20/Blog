@@ -2,49 +2,100 @@ from .models import Classe, Promotion, Trimestre, Devoir, Matiere, Note, Coeffic
 from rest_framework import serializers
 
 
-class FiliereSerializer(serializers.HyperlinkedModelSerializer):
+class FiliereSerializer(serializers.ModelSerializer):
     class Meta:
         model = Filiere
         fields = ['url', 'id', 'codeFiliere', 'nomFiliere']
 
 
-class ClasseSerializer(serializers.HyperlinkedModelSerializer):
+class ClasseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classe
         fields = ['url', 'id', 'codeClasse', 'libelleClasse',]
 
 
-class PromotionSerializer(serializers.HyperlinkedModelSerializer):
+class PromotionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Promotion
         fields = ['url', 'id', 'anneeDebut', 'anneeFin']
 
 
-class TrimestreSerializer(serializers.HyperlinkedModelSerializer):
+class TrimestreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trimestre
-        fields = ['url', 'codeTrimestre']
+        fields = ['url', 'id', 'codeTrimestre']
 
 
-class DevoirSerializer(serializers.HyperlinkedModelSerializer):
+class DevoirSerializer(serializers.ModelSerializer):
     class Meta:
         model = Devoir
-        fields = ['url', 'codeDevoir', 'denominationDevoir', 'trimestreDevoir', 'dateDevoir']
+        fields = ['url', 'id', 'codeDevoir', 'typeDevoir', 'denominationDevoir']
 
 
-class MatiereSerializer(serializers.HyperlinkedModelSerializer):
+class MatiereSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matiere
-        fields = ['url', 'codeMatiere', 'denomination', 'appreciation']
+        fields = ['url', 'id', 'codeMatiere', 'denomination', 'classeMatiere', 'filiereMatiere', 'appreciation']
 
 
-class NoteSerializer(serializers.HyperlinkedModelSerializer):
+class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
-        fields = ['url','devoirNote', 'eleve', 'matiereNote', 'valeurNote']
+        fields = ['url', 'id','devoirNote', 'eleve', 'matiereNote', 'valeurNote', 'trimestreDevoir',]
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.devoirNote:
+            devoirNote_representation = {
+                'id': instance.devoirNote.id,
+                'codeDevoir': instance.devoirNote.codeDevoir,
+                'typeDevoir': instance.devoirNote.typeDevoir,
+                'denominationDevoir': instance.devoirNote.denominationDevoir,
+            }
+            representation['devoirNote'] = devoirNote_representation
+
+        eleve_representation = {
+            'id': instance.eleve.id,
+            'username': instance.eleve.user.username,
+        }
+        representation['eleve'] = eleve_representation
+
+        matieres_queryset = Matiere.objects.filter(classeMatiere=instance.eleve.classe)
+
+        if matieres_queryset:
+            matieres_representation = []
+            for matiere in matieres_queryset:
+                matiere_representation = {
+                    'id': matiere.id,
+                    'codeMatiere': matiere.codeMatiere,
+                    'denomination': matiere.denomination,
+                }
+                matieres_representation.append(matiere_representation)
+
+            representation['matieres'] = matieres_representation
+
+        if instance.matiereNote:
+            matiereNote_representation = {
+                'id': instance.matiereNote.id,
+                'codeMatiere': instance.matiereNote.codeMatiere,
+                'denomination': instance.matiereNote.denomination,
+            }
+        else:
+            matiereNote_representation = None  # or any other default representation
+            
+        representation['matiereNote'] = matiereNote_representation
+
+        if instance.trimestreDevoir:
+            trimestreDevoir_representation = {
+                'id': instance.trimestreDevoir.id,
+                'codeTrimestre': instance.trimestreDevoir.codeTrimestre,
+            }
+            representation['trimestreDevoir'] = trimestreDevoir_representation
+        
+        return representation
 
 
-class CoefficientSerializer(serializers.HyperlinkedModelSerializer):
+class CoefficientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coefficient
         fields = ['url', 'matiereCoefficient', 'filiereCoefficient', 'valeurCoefficient']
