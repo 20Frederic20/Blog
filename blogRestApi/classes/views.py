@@ -43,6 +43,12 @@ class MatiereViewSet(viewsets.ModelViewSet):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
 
+    def get_queryset(self):
+        classe_id = self.request.GET.get('classe_id')
+        if classe_id:
+            return Matiere.objects.filter(classeMatiere__id=classe_id)
+        return Matiere.objects.all()  # Renvoyer une liste vide si aucun ID de classe n'est fourni
+
 
 class NoteViewSet(viewsets.ModelViewSet):
     """
