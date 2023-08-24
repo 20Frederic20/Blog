@@ -24,7 +24,7 @@ class EleveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Eleve
-        fields = ['url', 'user', 'filiere', 'classe', 'promotion']
+        fields = ['url', 'id', 'user', 'filiere', 'classe', 'promotion']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -36,12 +36,15 @@ class EleveSerializer(serializers.ModelSerializer):
         }
         representation['user'] = user_representation
 
-        classe_representation = {
-            'id': instance.classe.id,
-            'codeClasse': instance.classe.codeClasse,
-            # Ajoutez d'autres champs de la classe que vous souhaitez afficher
-        }
-        representation['classe'] = classe_representation
+        if instance.classe:
+            classe_representation = {
+                'id': instance.classe.id,
+                'codeClasse': instance.classe.codeClasse,
+                # Ajoutez d'autres champs de la classe que vous souhaitez afficher
+            }
+            representation['classe'] = classe_representation
+        else:
+            representation['classe'] = None
 
         filiere_representation = {
             'id': instance.filiere.id,
