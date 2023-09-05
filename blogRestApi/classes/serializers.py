@@ -29,20 +29,47 @@ class TrimestreSerializer(serializers.ModelSerializer):
 class DevoirSerializer(serializers.ModelSerializer):
     class Meta:
         model = Devoir
-        fields = ['url', 'id', 'codeDevoir', 'typeDevoir', 'denominationDevoir']
+        fields = ['url', 'id', 'codeDevoir',
+                  'typeDevoir', 'denominationDevoir']
 
 
 class MatiereSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matiere
-        fields = ['url', 'id', 'codeMatiere', 'denomination', 'classeMatiere', 'filiereMatiere', 'appreciation']
+        fields = ['url', 'id', 'codeMatiere', 'denomination',
+                  'classeMatiere', 'filiereMatiere', 'appreciation']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        if instance.classeMatiere:
+            classeMatiere_representation = {
+                'id': instance.classeMatiere.values_list('id', flat=True),
+                'codeClasse': instance.classeMatiere.values_list('codeClasse', flat=True),
+                'libelleClasse': instance.classeMatiere.values_list('libelleClasse', flat=True),
+            }
+        else:
+            classeMatiere_representation = None  # or any other default representation
+
+        representation['classeMatiere'] = classeMatiere_representation
+
+        if instance.filiereMatiere:
+            filiereMatiere_representation = {
+                'id': instance.filiereMatiere.values_list('id', flat=True),
+                'codeFiliere': instance.filiereMatiere.values_list('codeFiliere', flat=True),
+                # Ajoutez d'autres champs de la filière que vous souhaitez afficher
+            }
+            representation['filiereMatiere'] = filiereMatiere_representation
+
+        return representation
 
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
-        fields = ['url', 'id','devoirNote', 'eleve', 'matiereNote', 'valeurNote', 'trimestreDevoir',]
-    
+        fields = ['url', 'id', 'devoirNote', 'eleve',
+                  'matiereNote', 'valeurNote', 'trimestreDevoir',]
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if instance.devoirNote:
@@ -60,7 +87,8 @@ class NoteSerializer(serializers.ModelSerializer):
         }
         representation['eleve'] = eleve_representation
 
-        matieres_queryset = Matiere.objects.filter(classeMatiere=instance.eleve.classe)
+        matieres_queryset = Matiere.objects.filter(
+            classeMatiere=instance.eleve.classe)
 
         if matieres_queryset:
             matieres_representation = []
@@ -82,7 +110,7 @@ class NoteSerializer(serializers.ModelSerializer):
             }
         else:
             matiereNote_representation = None  # or any other default representation
-            
+
         representation['matiereNote'] = matiereNote_representation
 
         if instance.trimestreDevoir:
@@ -91,13 +119,12 @@ class NoteSerializer(serializers.ModelSerializer):
                 'codeTrimestre': instance.trimestreDevoir.codeTrimestre,
             }
             representation['trimestreDevoir'] = trimestreDevoir_representation
-        
+
         return representation
 
 
 class CoefficientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coefficient
-        fields = ['url', 'matiereCoefficient', 'filiereCoefficient', 'valeurCoefficient']
-
-
+        fields = ['url', 'matiereCoefficient',
+                  'filiereCoefficient', 'valeurCoefficient']

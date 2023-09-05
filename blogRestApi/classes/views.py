@@ -44,7 +44,10 @@ class MatiereViewSet(viewsets.ModelViewSet):
     serializer_class = MatiereSerializer
 
     def get_queryset(self):
+        filiere_id = self.request.GET.get('filiere_id')
         classe_id = self.request.GET.get('classe_id')
+        if filiere_id and classe_id:
+            return Matiere.objects.filter(filiereMatiere__id=filiere_id, classeMatiere__id=classe_id)
         if classe_id:
             return Matiere.objects.filter(classeMatiere__id=classe_id)
         return Matiere.objects.all()  # Renvoyer une liste vide si aucun ID de classe n'est fourni

@@ -63,7 +63,7 @@ class Filiere(models.Model):
 
 
 class Trimestre(models.Model):
-    codeTrimestre = models.PositiveIntegerField(_("Trimestre "))
+    codeTrimestre = models.PositiveIntegerField(_("Trimestre "), unique=True)
 
     def __str__(self):
         return f"{self.codeTrimestre}"
@@ -92,8 +92,8 @@ class Devoir(models.Model):
 class Matiere(models.Model):
     codeMatiere = models.CharField(_("Code "), max_length=7)
     denomination = models.CharField(_("Nom"), max_length=50)
-    classeMatiere = models.ForeignKey("classes.Classe", verbose_name=_("Classe"), on_delete=models.SET_NULL, null=True)
-    filiereMatiere = models.ForeignKey("classes.Filiere", verbose_name=_("Filiere"), on_delete=models.CASCADE, null=True)
+    classeMatiere = models.ManyToManyField("classes.Classe", verbose_name=_("Classe"), related_name='matieres_autorisees')
+    filiereMatiere = models.ManyToManyField("classes.Filiere", verbose_name=_("Filiere"), related_name='filieres_autorisees')
     appreciation = models.CharField(_("Appreciation"), max_length=50, blank=True, null=True)
 
     def __str__(self):
