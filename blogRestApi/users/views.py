@@ -32,7 +32,15 @@ class EleveViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Eleve.objects.select_related('user', 'classe', 'filiere', 'promotion')
+        filiere_id = self.request.GET.get('filiere_id')
+        classe_id = self.request.GET.get('classe_id')
+        if filiere_id and classe_id:
+            return Eleve.objects.filter(filiere__id=filiere_id, classe__id=classe_id)
+        if filiere_id:
+            return Eleve.objects.filter(filiere__id=filiere_id)
+        if classe_id:
+            return Eleve.objects.filter(classe__id=classe_id)
+        return Eleve.objects.all()
 
 
 class GroupViewSet(viewsets.ModelViewSet):
