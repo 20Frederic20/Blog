@@ -126,5 +126,4 @@ class NoteSerializer(serializers.ModelSerializer):
 class CoefficientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coefficient
-        fields = ['url', 'matiereCoefficient',
-                  'filiereCoefficient', 'valeurCoefficient']
+        fields = ['url', 'matiereCoefficient', 'valeurCoefficient']

@@ -4,5 +4,5 @@ migrations
 .vscode
 input.sql
 out.sql
-20180905_GestionBulletinsScolaires (1).pdf
-[MLD] Gestion du lycée (MLD et MCD à corriger) - Schéma.pdf
+static/
+templates/
