@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 
 class User(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
+    location = models.CharField(max_length=30, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
 
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -32,4 +32,21 @@ class Eleve(models.Model):
 
     def __str__(self):
         return f"{self.user.username}"
+    
+
+class Note(models.Model):
+    matiere = models.ForeignKey("classes.Matiere", verbose_name=_("Matiere"), on_delete=models.SET_NULL, null=True)
+    devoir = models.ForeignKey("classes.Devoir", verbose_name=_("Devoir "), on_delete=models.SET_NULL, null=True)
+    trimestre = models.ForeignKey("classes.Trimestre", verbose_name=_("Trimestre"), on_delete=models.SET_NULL, null=True)
+    eleve = models.ForeignKey("Eleve", verbose_name=_("Eleve"), on_delete=models.CASCADE)
+    valeur = models.PositiveIntegerField(_("Note"))
+    def __str__(self):
+        return '{}-{}'.format(self.matiere, self.valeur)
+
+    class Meta:
+        db_table = ''
+        managed = True
+        verbose_name = 'Note'
+        verbose_name_plural = 'Notes'
+        unique_together = ('matiere', 'devoir', 'trimestre', 'eleve')
 
