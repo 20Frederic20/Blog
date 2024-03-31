@@ -7,16 +7,7 @@ TYPES_DEVOIRS =(
     ('DEVOIR', 'DEVOIR'),
 )
 
-class YearField(models.PositiveIntegerField):
-    description = "A field to store a year."
-
-    def __init__(self, *args, **kwargs):
-        kwargs['validators'] = [self.validate_year]
-        super(YearField, self).__init__(*args, **kwargs)
-
-    def validate_year(self, value):
-        if value < 1000 or value > 9999:
-            raise models.ValidationError("Enter a valid year (between 1000 and 9999).")
+import datetime
 
 # Create your models here.
 class Classe(models.Model):
@@ -34,8 +25,11 @@ class Classe(models.Model):
 
 
 class Promotion(models.Model):
-    anneeDebut = YearField(unique=True)
-    anneeFin = YearField(unique=True)
+    YEAR_CHOICES = [(year, str(year)) for year in range(1900, 2101)]
+    current_year = datetime.datetime.now().year
+
+    anneeDebut = models.IntegerField(_('Year start'), choices=YEAR_CHOICES, default=current_year)
+    anneeFin = models.IntegerField(_('Year end'), choices=YEAR_CHOICES, default=current_year)
 
     def __str__(self):
         return '{}-{}'.format(self.anneeDebut, self.anneeFin)
@@ -90,10 +84,8 @@ class Devoir(models.Model):
 
 
 class Matiere(models.Model):
-    codeMatiere = models.CharField(_("Code "), max_length=7)
+    codeMatiere = models.CharField(_("Code "), max_length=9)
     denomination = models.CharField(_("Nom"), max_length=50)
-    classeMatiere = models.ManyToManyField("classes.Classe", verbose_name=_("Classe"), related_name='matieres_autorisees')
-    filiereMatiere = models.ManyToManyField("classes.Filiere", verbose_name=_("Filiere"), related_name='filieres_autorisees')
     appreciation = models.CharField(_("Appreciation"), max_length=50, blank=True, null=True)
 
     def __str__(self):
@@ -106,31 +98,16 @@ class Matiere(models.Model):
         verbose_name_plural = 'Matieres'
     
 class Coefficient(models.Model):
-    matiereCoefficient = models.ForeignKey("classes.Matiere", verbose_name=_("Matiere"), on_delete=models.CASCADE, null=True)
-    valeurCoefficient = models.PositiveIntegerField(_("Coefficient"))
+    matiere = models.ForeignKey("classes.Matiere", verbose_name=_("Matiere"), on_delete=models.CASCADE, null=True)
+    valeur = models.PositiveIntegerField(_("Coefficient"))
+    classe = models.ForeignKey("classes.Classe", verbose_name=_("Classe"), on_delete=models.CASCADE, null=True)
+    filiere = models.ForeignKey("classes.Filiere", verbose_name=_("Filiere"), on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return '{}-{}'.format(self.matiereCoefficient, self.valeurCoefficient)
+        return '{}-{}{}-{}'.format(self.matiere, self.classe.codeClasse, self.filiere.codeFiliere, self.valeur)
 
     class Meta:
         db_table = ''
         managed = True
         verbose_name = 'Coefficient'
         verbose_name_plural = 'Coefficients'
-
-
-class Note(models.Model):
-    matiereNote = models.ForeignKey("classes.Matiere", verbose_name=_("Matiere"), on_delete=models.SET_NULL, null=True)
-    devoirNote = models.ForeignKey("classes.Devoir", verbose_name=_("Devoir "), on_delete=models.SET_NULL, null=True)
-    trimestreDevoir = models.ForeignKey("classes.Trimestre", verbose_name=_("Trimestre"), on_delete=models.SET_NULL, null=True)
-    eleve = models.ForeignKey("users.Eleve", verbose_name=_("Eleve"), on_delete=models.CASCADE)
-    valeurNote = models.PositiveIntegerField(_("Note"))
-    def __str__(self):
-        return '{}-{}'.format(self.matiereNote, self.valeurNote)
-
-    class Meta:
-        db_table = ''
-        managed = True
-        verbose_name = 'Note'
-        verbose_name_plural = 'Notes'
-        unique_together = ('matiereNote', 'devoirNote', 'trimestreDevoir', 'eleve')
