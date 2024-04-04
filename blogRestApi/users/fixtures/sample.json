@@ -1,0 +1,13 @@
+[
+    {
+        "pk": 6,
+        "model": "users.User",
+        "fields": {
+            "username": "username",
+            "email": "username@example.com",
+            "password": "admin",
+            "first_name": "username",
+            "last_name": "last_name"
+        }
+    }
+]
