@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from .serializers import UserSerializer, GroupSerializer, EleveSerializer
 from .models import Eleve
 from classes.models import Classe, Promotion, Filiere
+from django.shortcuts import render
 
 User = get_user_model()
 
@@ -35,12 +36,8 @@ class EleveViewSet(viewsets.ModelViewSet):
         filiere_id = self.request.GET.get('filiere_id')
         classe_id = self.request.GET.get('classe_id')
         if filiere_id and classe_id:
-            return Eleve.objects.filter(filiere__id=filiere_id, classe__id=classe_id)
-        if filiere_id:
-            return Eleve.objects.filter(filiere__id=filiere_id)
-        if classe_id:
-            return Eleve.objects.filter(classe__id=classe_id)
-        return Eleve.objects.all()
+            self.queryset = Eleve.objects.filter(filiere__id=filiere_id, classe__id=classe_id)
+        return self.queryset
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -77,3 +74,7 @@ class LogoutView(views.APIView):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+
+def login(request):
+    return render(request, 'login.html', {})
