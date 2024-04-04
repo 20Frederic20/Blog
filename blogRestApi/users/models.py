@@ -29,6 +29,7 @@ class Eleve(models.Model):
     class Meta:
         verbose_name = _("Eleve")
         verbose_name_plural = _("Eleves")
+        unique_together = ('user', 'promotion')
 
     def __str__(self):
         return f"{self.user.username}"
@@ -40,8 +41,9 @@ class Note(models.Model):
     trimestre = models.ForeignKey("classes.Trimestre", verbose_name=_("Trimestre"), on_delete=models.SET_NULL, null=True)
     eleve = models.ForeignKey("Eleve", verbose_name=_("Eleve"), on_delete=models.CASCADE)
     valeur = models.PositiveIntegerField(_("Note"))
+    
     def __str__(self):
-        return '{}-{}'.format(self.matiere, self.valeur)
+        return '{}-{}-{}-{}'.format(self.eleve, self.devoir, self.matiere, self.valeur)
 
     class Meta:
         db_table = ''

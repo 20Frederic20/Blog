@@ -11,11 +11,11 @@ import datetime
 
 # Create your models here.
 class Classe(models.Model):
-    codeClasse = models.CharField(_("Code de la classe"), max_length=9, unique=True)
-    libelleClasse = models.CharField(_("Nom de la classe"), max_length=50, unique=True)
+    code = models.CharField(_("Code de la classe"), max_length=9, unique=True)
+    libelle = models.CharField(_("Nom de la classe"), max_length=50, unique=True)
 
     def __str__(self):
-        return f"{self.codeClasse}"
+        return f"{self.code}"
 
     class Meta:
         db_table = ''
@@ -69,12 +69,12 @@ class Trimestre(models.Model):
         verbose_name_plural = 'Trimestres'
 
 class Devoir(models.Model):
-    codeDevoir = models.PositiveIntegerField(_("Devoir "))
-    typeDevoir = models.CharField(max_length=7, choices=TYPES_DEVOIRS, default="INTERRO")
-    denominationDevoir = models.CharField(_("Denomination"), max_length=50, null=True)
+    code = models.PositiveIntegerField(_("Devoir "))
+    type = models.CharField(max_length=7, choices=TYPES_DEVOIRS, default="INTERRO")
+    denomination = models.CharField(_("Denomination"), max_length=50, null=True)
 
     def __str__(self):
-        return f"{self.denominationDevoir}"
+        return f"{self.denomination}"
 
     class Meta:
         db_table = ''
@@ -108,6 +108,7 @@ class Coefficient(models.Model):
 
     class Meta:
         db_table = ''
+        unique_together=('matiere', 'filiere', 'classe')
         managed = True
         verbose_name = 'Coefficient'
         verbose_name_plural = 'Coefficients'
