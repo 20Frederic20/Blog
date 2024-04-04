@@ -12,7 +12,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="My API",
+        title="MonScolaire API",
         default_version='v1',
         description="My API description",
         terms_of_service="https://www.example.com/terms/",
@@ -45,8 +45,13 @@ urlpatterns = [
     path('token/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh'),
     path('logout/', users_views.LogoutView.as_view(), name ='logout'),
+    path('calculate/<eleve_id>', classes_views.CalculationsView.as_view(), name='calculate'),
+    path('classes-notes/', classes_views.CreateorUpdateNoteView.as_view(), name='classes-notes'),
     
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    
+    #definition des vues de templates uniquement
+    path('login', users_views.login, name='login'),
+] 
 
