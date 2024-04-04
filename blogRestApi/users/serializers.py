@@ -18,6 +18,19 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'id', 'username', 'email', 'password']
+        
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+    
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)  # Crypter le mot de passe uniquement s'il est fourni
+        instance.save()
+        return instance
 
 
 class EleveSerializer(serializers.ModelSerializer):
@@ -39,7 +52,7 @@ class EleveSerializer(serializers.ModelSerializer):
         if instance.classe:
             classe_representation = {
                 'id': instance.classe.id,
-                'codeClasse': instance.classe.codeClasse,
+                'code': instance.classe.code,
                 # Ajoutez d'autres champs de la classe que vous souhaitez afficher
             }
             representation['classe'] = classe_representation
