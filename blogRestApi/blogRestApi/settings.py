@@ -38,8 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users',
-    'classes',
+    'core',
+    'core.promotions',
+    'core.classrooms',
+    'core.courses',
+    'core.coefficients',
+    'core.registries',
+    'core.users',
+    'core.subjects',
+    'core.instructs',
+    'core.scores',
+    
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
@@ -162,7 +171,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_USE_SESSIONS = True
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'core_promotions.User'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '192.168.100.27']
 
@@ -174,7 +183,7 @@ CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 5,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',

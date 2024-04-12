@@ -84,7 +84,7 @@ class Devoir(models.Model):
 
 
 class Matiere(models.Model):
-    codeMatiere = models.CharField(_("Code "), max_length=9)
+    codeMatiere = models.CharField(_("Code "), max_length=9, unique=True)
     denomination = models.CharField(_("Nom"), max_length=50)
     appreciation = models.CharField(_("Appreciation"), max_length=50, blank=True, null=True)
 
