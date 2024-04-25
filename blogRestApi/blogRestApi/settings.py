@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'core.subjects',
     'core.instructs',
     'core.scores',
-    
+
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
@@ -182,8 +182,9 @@ CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 1000,
+    'DEFAULT_PAGINATION_CLASS': None,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
