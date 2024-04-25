@@ -1,9 +1,6 @@
-from django.shortcuts import render
-from django.contrib.auth.models import  Group
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 
-from rest_framework import viewsets, status, response, exceptions, views
+from rest_framework import viewsets, status, views
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -26,19 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-    # def pre_save(self, obj):
-    #     last_name = obj.last_name
-    #     if last_name is not None:
-    #         # Génération du nom d'utilisateur unique
-    #         username = last_name.lower() + str(User.objects.count() + 1)
-    #         obj.username = username
-            
-    #         obj.email = last_name.lower() + '@' + last_name.lower() + '.com'
 
-    #         # Génération du mot de passe sécurisé
-    #         obj.password = make_password(username)
-    
 
 class StudentViewSet(viewsets.ModelViewSet):
     """
@@ -47,7 +32,7 @@ class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
 
 class TeacherViewSet(viewsets.ModelViewSet):
     """
@@ -56,7 +41,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
 
 class InstructViewSet(viewsets.ModelViewSet):
     """
@@ -65,8 +50,8 @@ class InstructViewSet(viewsets.ModelViewSet):
     queryset = Instruct.objects.all()
     serializer_class = InstructSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-    
+
+
 class RegisterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Registers to be viewed or edited.
@@ -88,8 +73,8 @@ class UserLogIn(ObtainAuthToken):
             'id': user.pk,
             'username': user.username
         })
-        
-        
+
+
 class LogoutView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -102,3 +87,9 @@ class LogoutView(views.APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+class StudentbyUserIdViewSet(APIView):
+    def get(self, request, user_id, *args, **kwargs):
+        student = Student.objects.get(user_id=user_id)
+        serializer = StudentSerializer(student)
+        return Response(serializer.data)

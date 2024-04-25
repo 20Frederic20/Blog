@@ -9,7 +9,7 @@ from django.conf.urls.static import static
 
 from core.classrooms.views import ClassroomViewSet
 from core.promotions.views import PromotionViewSet
-from core.users.views import UserViewSet, StudentViewSet, TeacherViewSet, LogoutView
+from core.users.views import UserViewSet, StudentViewSet, TeacherViewSet, LogoutView, StudentbyUserIdViewSet
 from core.instructs.views import InstructViewSet
 from core.registries.views import RegisterViewSet
 from core.subjects.views import SubjectViewSet
@@ -50,10 +50,11 @@ router.register(r'courses', CourseViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('token/', jwt_views.TokenObtainPairView.as_view(), name ='token_obtain_pair'),
-    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token_refresh'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest-framework')),
+    path('token/', jwt_views.TokenObtainPairView.as_view(), name ='token-obtain-pair'),
+    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name ='token-refresh'),
     path('logout/', LogoutView.as_view(), name ='logout'),
+    path('students/user/<int:user_id>/', StudentbyUserIdViewSet.as_view(), name ='student-user'),
     # path('calculate/<eleve_id>', classes_views.CalculationsView.as_view(), name='calculate'),
     # path('classes-notes/', classes_views.CreateorUpdateNoteView.as_view(), name='classes-notes'),
     
